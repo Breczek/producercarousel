@@ -1,0 +1,25 @@
+# Paczki instalacyjne i artefakty budowania
+/producercarousel.zip
+/build/
+/dist/
+
+# Zależności instalowane lokalnie
+/vendor/
+/node_modules/
+/composer.phar
+
+# Cache i raporty narzędzi
+/.phpunit.cache/
+/.phpunit.result.cache
+/.php-cs-fixer.cache
+/coverage/
+*.log
+
+# Edytory i system operacyjny
+/.idea/
+/.vscode/
+.DS_Store
+Thumbs.db
+*~
+*.swp
+*.swo
