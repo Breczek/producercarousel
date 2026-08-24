@@ -184,7 +184,9 @@ class ProducerCarousel extends Module implements WidgetInterface
     {
         $manufacturers = Manufacturer::getManufacturers(false, (int) $this->context->language->id, false);
         $suppliers = Supplier::getSuppliers(false, (int) $this->context->language->id, false);
-        $countOptions = array_map(function ($value) { return ['id' => $value, 'name' => (string) $value]; }, self::COUNTS);
+        $countOptions = array_map(function ($value) {
+            return ['id' => $value, 'name' => (string) $value];
+        }, self::COUNTS);
         $speedOptions = array_map(function ($value) {
             return ['id' => $value, 'name' => $value === 0 ? $this->trans('Wyłączone', [], 'Admin.Global') : $value . ' ms'];
         }, self::SPEEDS);

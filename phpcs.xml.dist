@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<ruleset name="Producer Carousel PSR-2">
+  <description>PHP_CodeSniffer configuration for the Producer Carousel module.</description>
+
+  <arg name="basepath" value="."/>
+  <arg name="colors"/>
+  <arg name="extensions" value="php"/>
+  <arg value="p"/>
+  <config name="ignore_warnings_on_exit" value="1"/>
+
+  <file>producercarousel.php</file>
+  <file>index.php</file>
+  <file>views</file>
+
+  <exclude-pattern>*/vendor/*</exclude-pattern>
+
+  <rule ref="PSR2"/>
+
+  <!-- PrestaShop discovers the main legacy module class in the global namespace. -->
+  <rule ref="PSR1.Classes.ClassDeclaration.MissingNamespace">
+    <exclude-pattern>producercarousel.php</exclude-pattern>
+  </rule>
+</ruleset>
