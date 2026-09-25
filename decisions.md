@@ -16,10 +16,12 @@
 - Atrybut `alt` obrazu zawiera nazwę encji.
 - Encja bez logo pozostaje na liście i zajmuje puste miejsce. Administrator może ją wyłączyć w konfiguracji.
 - Na froncie nie pokazujemy encji nieaktywnych, nawet jeśli nie zostały wykluczone w konfiguracji.
-- W widoku domyślnego hooka bez parametru `type` wyświetlane są obie karuzele. Parametr `type` przyjmuje `manufacturers` albo `suppliers`.
+- Parametr `type` widgetu przyjmuje `all`, `manufacturers` albo `suppliers` i filtruje, która karuzela (lub obie) się renderuje — to jest mechanizm „osobnych widgetów” dla producentów i dostawców, wywoływanych np. `{widget name='producercarousel' type='manufacturers'}`.
+- Hook `displayHome` bez jawnego parametru `type` używa domyślnie wartości z ustawienia „Co wyświetlać w głównym hooku” (`PC_DISPLAY_MODE`, patrz niżej).
 
 ## Konfiguracja back office
 
+- Administrator wybiera w konfiguracji modułu, co ma się wyświetlać w domyślnym hooku `displayHome`: obie karuzele, tylko producenci albo tylko dostawcy (`PC_DISPLAY_MODE`, domyślnie `all`).
 - Producent i dostawca mają osobne ustawienia liczby widocznych elementów oraz szybkości automatycznego przewijania.
 - Liczba elementów oznacza liczbę logo widocznych równocześnie na dużym ekranie. Widok responsywny zmniejsza ją na mniejszych ekranach.
 - Szybkość oznacza odstęp pomiędzy automatycznymi przesunięciami w milisekundach.

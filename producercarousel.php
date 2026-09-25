@@ -14,9 +14,11 @@ class ProducerCarousel extends Module implements WidgetInterface
     private const SUP_COUNT = 'PC_SUP_COUNT';
     private const SUP_SPEED = 'PC_SUP_SPEED';
     private const SUP_EXCLUDED = 'PC_SUP_EXCLUDED';
+    private const DISPLAY_MODE = 'PC_DISPLAY_MODE';
 
     private const COUNTS = [2, 3, 4, 5, 6, 8];
     private const SPEEDS = [0, 2000, 3000, 4000, 5000, 7000, 10000];
+    private const DISPLAY_MODES = ['all', 'manufacturers', 'suppliers'];
 
     public function __construct()
     {
@@ -44,12 +46,13 @@ class ProducerCarousel extends Module implements WidgetInterface
             && Configuration::updateValue(self::MFR_EXCLUDED, '[]')
             && Configuration::updateValue(self::SUP_COUNT, 6)
             && Configuration::updateValue(self::SUP_SPEED, 4000)
-            && Configuration::updateValue(self::SUP_EXCLUDED, '[]');
+            && Configuration::updateValue(self::SUP_EXCLUDED, '[]')
+            && Configuration::updateValue(self::DISPLAY_MODE, 'all');
     }
 
     public function uninstall()
     {
-        foreach ([self::MFR_COUNT, self::MFR_SPEED, self::MFR_EXCLUDED, self::SUP_COUNT, self::SUP_SPEED, self::SUP_EXCLUDED] as $key) {
+        foreach ([self::MFR_COUNT, self::MFR_SPEED, self::MFR_EXCLUDED, self::SUP_COUNT, self::SUP_SPEED, self::SUP_EXCLUDED, self::DISPLAY_MODE] as $key) {
             Configuration::deleteByName($key);
         }
 
@@ -82,6 +85,10 @@ class ProducerCarousel extends Module implements WidgetInterface
 
     public function hookDisplayHome($params)
     {
+        if (!isset($params['type'])) {
+            $params['type'] = $this->getDisplayMode();
+        }
+
         return $this->renderWidget('displayHome', $params);
     }
 
@@ -95,7 +102,7 @@ class ProducerCarousel extends Module implements WidgetInterface
     public function getWidgetVariables($hookName, array $configuration)
     {
         $type = isset($configuration['type']) ? (string) $configuration['type'] : 'all';
-        if (!in_array($type, ['all', 'manufacturers', 'suppliers'], true)) {
+        if (!in_array($type, self::DISPLAY_MODES, true)) {
             $type = 'all';
         }
 
@@ -153,9 +160,16 @@ class ProducerCarousel extends Module implements WidgetInterface
             }
         }
 
+        $displayMode = (string) Tools::getValue(self::DISPLAY_MODE);
+        if (!in_array($displayMode, self::DISPLAY_MODES, true)) {
+            $errors[] = $this->trans('Wybrano niedozwoloną wartość ustawienia.', [], 'Modules.Producercarousel.Admin');
+        }
+
         if ($errors) {
             return $errors;
         }
+
+        Configuration::updateValue(self::DISPLAY_MODE, $displayMode);
 
         foreach ($values as $key => $value) {
             Configuration::updateValue($key, $value);
@@ -190,11 +204,17 @@ class ProducerCarousel extends Module implements WidgetInterface
         $speedOptions = array_map(function ($value) {
             return ['id' => $value, 'name' => $value === 0 ? $this->trans('Wyłączone', [], 'Admin.Global') : $value . ' ms'];
         }, self::SPEEDS);
+        $displayModeOptions = [
+            ['id' => 'all', 'name' => $this->trans('Obie karuzele', [], 'Modules.Producercarousel.Admin')],
+            ['id' => 'manufacturers', 'name' => $this->trans('Tylko producenci', [], 'Modules.Producercarousel.Admin')],
+            ['id' => 'suppliers', 'name' => $this->trans('Tylko dostawcy', [], 'Modules.Producercarousel.Admin')],
+        ];
 
         $fieldsForm = [[
             'form' => [
                 'legend' => ['title' => $this->trans('Ustawienia karuzeli', [], 'Modules.Producercarousel.Admin'), 'icon' => 'icon-cogs'],
                 'input' => [
+                    $this->selectField(self::DISPLAY_MODE, $this->trans('Co wyświetlać w głównym hooku (displayHome)', [], 'Modules.Producercarousel.Admin'), $displayModeOptions),
                     $this->selectField(self::MFR_COUNT, $this->trans('Liczba widocznych producentów', [], 'Modules.Producercarousel.Admin'), $countOptions),
                     $this->selectField(self::MFR_SPEED, $this->trans('Szybkość producentów', [], 'Modules.Producercarousel.Admin'), $speedOptions),
                     $this->checkboxField('PC_MFR', $this->trans('Widoczni producenci', [], 'Modules.Producercarousel.Admin'), $manufacturers, 'id_manufacturer'),
@@ -237,6 +257,7 @@ class ProducerCarousel extends Module implements WidgetInterface
     private function getFormValues(array $manufacturers, array $suppliers)
     {
         $values = [
+            self::DISPLAY_MODE => $this->getDisplayMode(),
             self::MFR_COUNT => $this->getAllowedValue(self::MFR_COUNT, self::COUNTS, 6),
             self::MFR_SPEED => $this->getAllowedValue(self::MFR_SPEED, self::SPEEDS, 4000),
             self::SUP_COUNT => $this->getAllowedValue(self::SUP_COUNT, self::COUNTS, 6),
@@ -261,7 +282,7 @@ class ProducerCarousel extends Module implements WidgetInterface
         return '<div class="alert alert-info"><p><strong>' . $this->trans('Wywołanie jako widget', [], 'Modules.Producercarousel.Admin') . '</strong></p>'
             . '<p><code>{widget name=\'producercarousel\' type=\'manufacturers\'}</code></p>'
             . '<p><code>{widget name=\'producercarousel\' type=\'suppliers\'}</code></p>'
-            . '<p>' . $this->trans('Bez parametru type moduł wyświetli obie karuzele.', [], 'Modules.Producercarousel.Admin') . '</p></div>';
+            . '<p>' . $this->trans('Bez parametru type moduł wyświetli to, co wybrano w ustawieniu „Co wyświetlać w głównym hooku”.', [], 'Modules.Producercarousel.Admin') . '</p></div>';
     }
 
     private function getManufacturerItems()
@@ -315,5 +336,12 @@ class ProducerCarousel extends Module implements WidgetInterface
     {
         $value = (int) Configuration::get($key);
         return in_array($value, $allowed, true) ? $value : $default;
+    }
+
+    private function getDisplayMode()
+    {
+        $value = (string) Configuration::get(self::DISPLAY_MODE);
+
+        return in_array($value, self::DISPLAY_MODES, true) ? $value : 'all';
     }
 }
