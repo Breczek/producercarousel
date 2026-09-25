@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <module>
   <name>producercarousel</name>
-  <displayName><![CDATA[Karuzela producentów i dostawców]]></displayName>
-  <version><![CDATA[1.1.0]]></version>
-  <description><![CDATA[Wyświetla producentów i dostawców w dwóch niezależnych karuzelach.]]></description>
-  <author><![CDATA[Producer Carousel]]></author>
+  <displayName><![CDATA[Brand & Supplier Carousel]]></displayName>
+  <version><![CDATA[1.1.1]]></version>
+  <description><![CDATA[Displays manufacturers and suppliers in two independent logo carousels.]]></description>
+  <author><![CDATA[Marcin Bręczewski]]></author>
   <tab><![CDATA[front_office_features]]></tab>
   <is_configurable>1</is_configurable>
   <need_instance>0</need_instance>

@@ -1,21 +1,32 @@
-# Paczki instalacyjne i artefakty budowania
+# Install packages and build artefacts
 /producercarousel.zip
+*.zip
 /build/
 /dist/
 
-# Zależności instalowane lokalnie
+# Locally installed dependencies
 /vendor/
 /node_modules/
 /composer.phar
 
-# Cache i raporty narzędzi
+# Tool caches and reports
 /.phpunit.cache/
 /.phpunit.result.cache
 /.php-cs-fixer.cache
 /coverage/
 *.log
 
-# Edytory i system operacyjny
+# Secrets — never commit
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+*.p12
+credentials*
+*secret*.json
+
+# Editors and OS
 /.idea/
 /.vscode/
 .DS_Store

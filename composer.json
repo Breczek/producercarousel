@@ -2,7 +2,7 @@
   "name": "producer-carousel/producercarousel",
   "description": "PrestaShop module displaying manufacturers and suppliers in carousels.",
   "type": "prestashop-module",
-  "license": "AFL-3.0",
+  "license": "MIT",
   "require-dev": {
     "squizlabs/php_codesniffer": "^3.13"
   },

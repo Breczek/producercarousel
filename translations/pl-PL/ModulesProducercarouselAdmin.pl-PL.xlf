@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file original="modules/producercarousel/producercarousel.php" source-language="en-US" target-language="pl-PL" datatype="plaintext">
+    <body>
+      <trans-unit id="ab80d37efd135213b67abd4f0299fe09">
+        <source>Brand &amp; Supplier Carousel</source>
+        <target>Karuzela producentów i dostawców</target>
+      </trans-unit>
+      <trans-unit id="a63e8615f95326d92481a0135a6877c2">
+        <source>Displays manufacturers and suppliers in two independent logo carousels.</source>
+        <target>Wyświetla producentów i dostawców w dwóch niezależnych karuzelach.</target>
+      </trans-unit>
+      <trans-unit id="6fd5ccee15c985b61568cbc423ed7541">
+        <source>An invalid value was selected.</source>
+        <target>Wybrano niedozwoloną wartość ustawienia.</target>
+      </trans-unit>
+      <trans-unit id="7dbbd0ea5d8ea5cd850074ce5942641d">
+        <source>Dimensions must be a whole number between %min% and %max% px (0 = automatic where allowed).</source>
+        <target>Wymiary muszą być liczbą całkowitą z zakresu %min%–%max% px (0 = automatycznie tam, gdzie to dozwolone).</target>
+      </trans-unit>
+      <trans-unit id="e222660ef1dda68155468c060b313fe8">
+        <source>Both carousels</source>
+        <target>Obie karuzele</target>
+      </trans-unit>
+      <trans-unit id="774291c87977895bf5f84f1ec16bc927">
+        <source>Manufacturers only</source>
+        <target>Tylko producenci</target>
+      </trans-unit>
+      <trans-unit id="cb72314d3ce3688499fe381b38444e0b">
+        <source>Suppliers only</source>
+        <target>Tylko dostawcy</target>
+      </trans-unit>
+      <trans-unit id="de62775a71fc2bf7a13d7530ae24a7ed">
+        <source>General settings</source>
+        <target>Ustawienia ogólne</target>
+      </trans-unit>
+      <trans-unit id="b42f61128fb93b9df861668597d961fa">
+        <source>What to display in the main hook (displayHome)</source>
+        <target>Co wyświetlać w głównym hooku (displayHome)</target>
+      </trans-unit>
+      <trans-unit id="f29b2a3fc1d1f723242c19c064921627">
+        <source>Manufacturer carousel</source>
+        <target>Karuzela producentów</target>
+      </trans-unit>
+      <trans-unit id="a56fabb89fdd3c3ab5897d19fa5b3ec9">
+        <source>Visible manufacturers</source>
+        <target>Widoczni producenci</target>
+      </trans-unit>
+      <trans-unit id="c3c56852d002d3bb83ade822abbc7aee">
+        <source>Supplier carousel</source>
+        <target>Karuzela dostawców</target>
+      </trans-unit>
+      <trans-unit id="d2e89ab7afdcb8bbf5d2e2061d11b478">
+        <source>Visible suppliers</source>
+        <target>Widoczni dostawcy</target>
+      </trans-unit>
+      <trans-unit id="ed4e9d8279c5132c353921ddf22e1721">
+        <source>Standard (stops at the end, autoplay rewinds to the start)</source>
+        <target>Standardowy (zatrzymuje się na końcu, autoplay wraca na początek)</target>
+      </trans-unit>
+      <trans-unit id="25b7eae5ff345b9315b7dfa3d21eb4bc">
+        <source>Infinite loop</source>
+        <target>Nieskończona pętla</target>
+      </trans-unit>
+      <trans-unit id="c58eaded8efc9edfb20b1fdf3bc23dc9">
+        <source>Continuous scroll (infinite ticker)</source>
+        <target>Ciągły przesuw (infinity ticker)</target>
+      </trans-unit>
+      <trans-unit id="6adf97f83acf6453d4a6a4b1070f3754">
+        <source>None</source>
+        <target>Brak</target>
+      </trans-unit>
+      <trans-unit id="a8913503788429081a81e455a4fc3416">
+        <source>Minimal (chevron only)</source>
+        <target>Minimalne (sama strzałka)</target>
+      </trans-unit>
+      <trans-unit id="d2cf07c9accfe0a701559bba45722169">
+        <source>Filled circle</source>
+        <target>Wypełnione koło</target>
+      </trans-unit>
+      <trans-unit id="ab867fb567ca6e70e469c7a4367f7780">
+        <source>Outlined square</source>
+        <target>Kwadrat z obramowaniem</target>
+      </trans-unit>
+      <trans-unit id="4c72d232d1a1406e6c26251bbf6c3b25">
+        <source>Dots</source>
+        <target>Kropki</target>
+      </trans-unit>
+      <trans-unit id="a0b0293a2db49f5f93c15a62e095c819">
+        <source>Lines</source>
+        <target>Kreski</target>
+      </trans-unit>
+      <trans-unit id="54d84c893287cb8244181a0ad987c814">
+        <source>Dynamic dots (scaled)</source>
+        <target>Dynamiczne kropki (skalowane)</target>
+      </trans-unit>
+      <trans-unit id="b2508c708e5bbff8aa02a68a5218890b">
+        <source>Visible items</source>
+        <target>Liczba widocznych elementów</target>
+      </trans-unit>
+      <trans-unit id="502b3ff2ebbd5cc9fc107aa987e844eb">
+        <source>Scroll mode</source>
+        <target>Tryb przewijania</target>
+      </trans-unit>
+      <trans-unit id="89bc0fe4e2490fae95dea81ec9ff8b82">
+        <source>In standard mode arrows and dots are hidden when all logos fit on screen. Loop and continuous scroll always run — with few logos, the logos are duplicated.</source>
+        <target>W trybie standardowym strzałki i kropki znikają, gdy wszystkie logo mieszczą się na ekranie. Pętla i przesuw ciągły działają zawsze — przy małej liczbie logo są one powielane.</target>
+      </trans-unit>
+      <trans-unit id="44877c6aa8e93fa5a91c9361211464fb">
+        <source>Speed</source>
+        <target>Szybkość</target>
+      </trans-unit>
+      <trans-unit id="5ab538c0b6f97dc4681cf663745ca34d">
+        <source>Standard and loop modes: delay between slides. Continuous mode: time it takes one logo to pass (lower = faster).</source>
+        <target>W trybie standardowym i pętli: odstęp między przesunięciami. W trybie ciągłym: czas przejazdu jednego logo (mniej = szybciej).</target>
+      </trans-unit>
+      <trans-unit id="1ddbb15e2f828caa1179553775e4fc81">
+        <source>Arrow style</source>
+        <target>Styl strzałek</target>
+      </trans-unit>
+      <trans-unit id="7af3f2c0593d1c3caa32bd272c580d51">
+        <source>Dot style (pagination)</source>
+        <target>Styl kropek (paginacja)</target>
+      </trans-unit>
+      <trans-unit id="289854a0b31e73771c488bc62eb88b2e">
+        <source>Item width</source>
+        <target>Szerokość elementu</target>
+      </trans-unit>
+      <trans-unit id="d5bea6fa4215d7c290087e4d54f14626">
+        <source>0 = automatic, based on the number of visible items. A fixed width overrides the number of visible items.</source>
+        <target>0 = automatycznie według liczby widocznych elementów. Podana szerokość zastępuje ustawienie liczby elementów.</target>
+      </trans-unit>
+      <trans-unit id="e90acd3d69fcf601ba7aafd38431b5ca">
+        <source>Item height</source>
+        <target>Wysokość elementu</target>
+      </trans-unit>
+      <trans-unit id="7611b5986104b6963cd14b388c82476b">
+        <source>0 = default height. Logos are scaled proportionally to fit this height.</source>
+        <target>0 = domyślna wysokość. Logo jest skalowane proporcjonalnie do tej wysokości.</target>
+      </trans-unit>
+      <trans-unit id="2f106ebe2f5c8b25d7b7109cb4acdec9">
+        <source>Space between items</source>
+        <target>Odstęp między elementami</target>
+      </trans-unit>
+      <trans-unit id="49e79c27f7e2cec3c13eee1b2f14f2fe">
+        <source>Range: %min%–%max% px.</source>
+        <target>Zakres: %min%–%max% px.</target>
+      </trans-unit>
+      <trans-unit id="19d3894f53ce79c3f836f26cf8a3be3b">
+        <source>inactive</source>
+        <target>nieaktywny</target>
+      </trans-unit>
+      <trans-unit id="c909318886945429114cd5ee5e7f5078">
+        <source>Uncheck the items you do not want to display.</source>
+        <target>Odznacz pozycje, których nie chcesz wyświetlać.</target>
+      </trans-unit>
+      <trans-unit id="72255248a5fe15c206749b8795139540">
+        <source>Use as a widget</source>
+        <target>Wywołanie jako widget</target>
+      </trans-unit>
+      <trans-unit id="bb22846b0803238e345d488cb45b10fa">
+        <source>Without the type parameter the module displays what is selected in “What to display in the main hook”.</source>
+        <target>Bez parametru type moduł wyświetli to, co wybrano w ustawieniu „Co wyświetlać w głównym hooku”.</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

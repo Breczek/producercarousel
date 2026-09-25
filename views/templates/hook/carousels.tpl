@@ -9,7 +9,7 @@
       data-dots="{$settings.dots|escape:'htmlall':'UTF-8'}"
       data-width="{$settings.width|intval}"
       data-gap="{$settings.gap|intval}"
-      data-bullet-label="{l s='Przejdź do slajdu' d='Modules.Producercarousel.Shop'}"
+      data-bullet-label="{l s='Go to slide' d='Modules.Producercarousel.Shop'}"
       style="{if $settings.width}--producer-carousel-item-width: {$settings.width|intval}px;{/if}{if $settings.height}--producer-carousel-height: {$settings.height|intval}px;{/if}"
       aria-labelledby="{$carousel.id|escape:'htmlall':'UTF-8'}"
     >
@@ -40,8 +40,8 @@
         </div>
 
         {if $settings.arrows != 'none'}
-          <button class="producer-carousel__arrow swiper-button-prev js-producer-carousel-prev" type="button" aria-label="{l s='Poprzedni slajd' d='Modules.Producercarousel.Shop'}"></button>
-          <button class="producer-carousel__arrow swiper-button-next js-producer-carousel-next" type="button" aria-label="{l s='Następny slajd' d='Modules.Producercarousel.Shop'}"></button>
+          <button class="producer-carousel__arrow swiper-button-prev js-producer-carousel-prev" type="button" aria-label="{l s='Previous slide' d='Modules.Producercarousel.Shop'}"></button>
+          <button class="producer-carousel__arrow swiper-button-next js-producer-carousel-next" type="button" aria-label="{l s='Next slide' d='Modules.Producercarousel.Shop'}"></button>
         {/if}
       </div>
 

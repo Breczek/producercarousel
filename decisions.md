@@ -1,45 +1,51 @@
-# Producer Carousel — decyzje projektowe
+# Brand & Supplier Carousel — design decisions
 
-## Zakres
+## Scope
 
-- Moduł ma nazwę techniczną `producercarousel` i nazwę widoczną „Karuzela producentów i dostawców”.
-- Wspierane wersje: PrestaShop 8.x i 9.x oraz PHP zgodne z tymi wersjami.
-- Moduł wyświetla dwie niezależne karuzele: producentów i dostawców.
-- Domyślnym miejscem instalacji jest `displayHome`.
-- Moduł implementuje `PrestaShop\PrestaShop\Core\Module\WidgetInterface`, dzięki czemu można go wywołać w dowolnym hooku.
-- Przykładowe wywołania widgetów są wyświetlane na stronie konfiguracji modułu.
+- Technical name `producercarousel`, display name “Brand & Supplier Carousel”.
+- Supported versions: PrestaShop 8.x and 9.x with the PHP versions they support.
+- The module renders two independent carousels: manufacturers and suppliers.
+- Default hook: `displayHome`.
+- The module implements `PrestaShop\PrestaShop\Core\Module\WidgetInterface`, so it can be called from any hook or template.
+- Example widget calls are shown on the module configuration page.
 
-## Dane i zachowanie front office
+## Data and front-office behaviour
 
-- Nazwa, logo oraz adres strony są pobierane z natywnych danych producenta/dostawcy w PrestaShop.
-- Kliknięcie logo prowadzi do natywnej strony producenta lub dostawcy.
-- Atrybut `alt` obrazu zawiera nazwę encji.
-- Encja bez logo pozostaje na liście i zajmuje puste miejsce. Administrator może ją wyłączyć w konfiguracji.
-- Na froncie nie pokazujemy encji nieaktywnych, nawet jeśli nie zostały wykluczone w konfiguracji.
-- Parametr `type` widgetu przyjmuje `all`, `manufacturers` albo `suppliers` i filtruje, która karuzela (lub obie) się renderuje — to jest mechanizm „osobnych widgetów” dla producentów i dostawców, wywoływanych np. `{widget name='producercarousel' type='manufacturers'}`.
-- Hook `displayHome` bez jawnego parametru `type` używa domyślnie wartości z ustawienia „Co wyświetlać w głównym hooku” (`PC_DISPLAY_MODE`, patrz niżej).
+- Name, logo and URL come from PrestaShop's native manufacturer/supplier data.
+- Clicking a logo opens the native manufacturer or supplier page.
+- The image `alt` attribute holds the entity name.
+- An entity without a logo stays in the list and takes an empty slot. The administrator can exclude it in the configuration.
+- Inactive entities are never shown on the front office, even when not excluded in the configuration.
+- The widget `type` parameter accepts `all`, `manufacturers` or `suppliers` and selects which carousel (or both) is rendered — this is how the two carousels are used as separate widgets, e.g. `{widget name='producercarousel' type='manufacturers'}`.
+- `displayHome` without an explicit `type` uses the “What to display in the main hook” setting (`PC_DISPLAY_MODE`, see below).
 
-## Konfiguracja back office
+## Back-office configuration
 
-- Administrator wybiera w konfiguracji modułu, co ma się wyświetlać w domyślnym hooku `displayHome`: obie karuzele, tylko producenci albo tylko dostawcy (`PC_DISPLAY_MODE`, domyślnie `all`).
-- Producent i dostawca mają osobne, pełne zestawy ustawień karuzeli (formularz ma trzy sekcje: ogólne, producenci, dostawcy). Klucze mają postać `PC_MFR_<KLUCZ>` / `PC_SUP_<KLUCZ>`, a definicje z dozwolonymi wartościami są w jednej stałej `CAROUSEL_SETTINGS`.
-- Liczba elementów oznacza liczbę logo widocznych równocześnie na dużym ekranie. Widok responsywny zmniejsza ją na mniejszych ekranach.
-- Szybkość oznacza odstęp pomiędzy automatycznymi przesunięciami w milisekundach.
-- Tryb przewijania (`MODE`): `slide` (zatrzymuje się na końcu, autoplay wraca na początek przez `rewind`), `loop` (nieskończona pętla, domyślny — zachowuje dotychczasowe zachowanie) oraz `marquee` (ciągły, liniowy przesuw „infinity ticker”). W trybie `marquee` ustawienie szybkości oznacza czas przejazdu jednego logo, a przeciąganie palcem jest wyłączone.
-- Styl strzałek (`ARROWS`): `none`, `minimal`, `circle`, `square`. Styl paginacji (`DOTS`): `none` (domyślnie), `dots`, `lines`, `dynamic`. Kolory ustawia się w motywie przez zmienne CSS `--producer-carousel-accent` i `--producer-carousel-accent-contrast`.
-- Wymiary podawane ręcznie w px: szerokość elementu (`WIDTH`, 40–600, 0 = wg liczby elementów; podana szerokość przełącza Swiper na `slidesPerView: 'auto'` i zastępuje liczbę elementów), wysokość elementu (`HEIGHT`, 30–400, 0 = domyślna) i odstęp (`GAP`, 0–100, domyślnie 16).
-- Dostępne wartości są ograniczone do wartości podanych w formularzu; pola liczbowe są walidowane zakresem.
-- Nowe klucze konfiguracji tworzy `installDefaults()` wywoływane przy instalacji i w `upgrade/upgrade-1.1.0.php`; istniejące wartości nie są nadpisywane. Brakujące lub błędne wartości są na froncie zastępowane domyślnymi.
-- Wszystkie encje są domyślnie zaznaczone. W bazie zapisujemy listę wykluczeń, więc nowo utworzone encje będą automatycznie widoczne.
-- Konfiguracja respektuje kontekst sklepu w trybie multistore przez użycie `Configuration`.
+- The administrator chooses what `displayHome` renders: both carousels, manufacturers only or suppliers only (`PC_DISPLAY_MODE`, default `all`).
+- Manufacturers and suppliers each have a full, separate set of carousel settings (the form has three sections: general, manufacturers, suppliers). Keys are `PC_MFR_<KEY>` / `PC_SUP_<KEY>`; definitions and allowed values live in a single `CAROUSEL_SETTINGS` constant.
+- Visible items is the number of logos shown at once on a large screen. Smaller breakpoints reduce it.
+- Speed is the autoplay delay between slides in milliseconds.
+- Scroll mode (`MODE`): `slide` (stops at the end; autoplay rewinds via `rewind`), `loop` (infinite loop, default — keeps the 1.0 behaviour) and `marquee` (continuous linear “infinite ticker”). In `marquee` mode speed means the time one logo takes to pass, and drag/swipe is disabled.
+- Arrow style (`ARROWS`): `none`, `minimal`, `circle`, `square`. Pagination style (`DOTS`): `none` (default), `dots`, `lines`, `dynamic`. Colours are set in the theme through the CSS custom properties `--producer-carousel-accent` and `--producer-carousel-accent-contrast`.
+- Dimensions are entered in px: item width (`WIDTH`, 40–600, 0 = derived from visible items; a fixed width switches Swiper to `slidesPerView: 'auto'` and overrides visible items), item height (`HEIGHT`, 30–400, 0 = default) and gap (`GAP`, 0–100, default 16).
+- Select fields accept only the listed values; numeric fields are range-validated.
+- New configuration keys are created by `installDefaults()`, called on install and from `upgrade/upgrade-1.1.0.php`; existing values are never overwritten. Missing or invalid values fall back to defaults on the front office.
+- All entities are selected by default. The database stores an exclusion list, so newly created entities appear automatically.
+- Configuration respects the multistore shop context through `Configuration`.
 
-## Slider i zasoby
+## Translations
 
-- Classic nie udostępnia stabilnego API wieloelementowej karuzeli przeznaczonego dla modułów.
-- Używamy Swiper 12.2.0 na licencji MIT. Jest to wersja po poprawce bezpieczeństwa dotyczącej prototype pollution i zachowująca szerszą zgodność przeglądarek niż seria 14.
-- Pliki Swiper są dostarczane lokalnie z modułem, bez CDN. Moduł nie zależy od dostępności zewnętrznego serwera i nie wysyła do niego danych odwiedzających.
-- Skrypt inicjalizujący jest izolowany w kontenerze modułu i obsługuje wiele instancji widgetu na jednej stronie.
-- Tryby `loop` i `marquee` działają zawsze, także gdy wszystkie logo mieszczą się na ekranie (wybór administratora jest jawny). Tylko tryb `slide` używa `watchOverflow` i ukrywa strzałki/kropki, gdy nie ma czego przewijać.
-- Pętla Swipera wymaga więcej slajdów niż widać naraz. Gdy logo jest za mało, JS powiela cały zestaw; kopie mają `aria-hidden` i `tabindex="-1"`, więc czytnik ekranu i klawiatura widzą każde logo raz. Przy powielonych slajdach paginację renderuje moduł (`type: 'custom'`) — jedna kropka na prawdziwe logo; styl `dynamic` wygląda wtedy jak zwykłe kropki.
-- Przy `prefers-reduced-motion: reduce` autoplay i przesuw ciągły są wyłączone.
-- Swiper 12 wstrzykuje strzałkę jako SVG (`.swiper-navigation-icon`), więc style strzałek stylują przycisk i SVG, a nie ikonę z fontu.
+- Source strings are English, following PrestaShop convention. The module uses the new translation system (`isUsingNewTranslationSystem()`) with domains `Modules.Producercarousel.Admin` and `Modules.Producercarousel.Shop`.
+- A Polish catalogue ships in `translations/pl-PL/*.xlf`. Other languages can be added the same way or through International → Translations.
+- A few generic labels (“Save”, “Disabled”, “The settings have been updated.”) use core domains so PrestaShop's own translations apply.
+
+## Slider and assets
+
+- Classic does not expose a stable multi-item carousel API intended for modules.
+- Swiper 12.2.0 (MIT) is used: it includes the prototype-pollution security fix and keeps wider browser support than the 14.x line.
+- Swiper files ship locally with the module, no CDN. The module does not depend on an external server and sends no visitor data to one.
+- The init script is scoped to the module container and supports multiple widget instances on one page.
+- `loop` and `marquee` always run, even when all logos fit on screen (the administrator chose them explicitly). Only `slide` uses `watchOverflow` and hides arrows/dots when there is nothing to scroll.
+- Swiper's loop needs noticeably more slides than are visible at once. With too few logos the script duplicates the whole set; copies get `aria-hidden` and `tabindex="-1"`, so screen readers and keyboard users meet each logo once. When slides are duplicated, pagination is rendered by the module (`type: 'custom'`) — one dot per real logo; the `dynamic` style then looks like plain dots.
+- With `prefers-reduced-motion: reduce`, autoplay and continuous scroll are disabled.
+- Swiper 12 injects the arrow as an SVG (`.swiper-navigation-icon`), so arrow styles target the button and the SVG instead of an icon font.

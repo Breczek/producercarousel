@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file original="modules/producercarousel/producercarousel.php" source-language="en-US" target-language="pl-PL" datatype="plaintext">
+    <body>
+      <trans-unit id="84be54bb4bd1b755a27d86388700d097">
+        <source>Brands</source>
+        <target>Producenci</target>
+      </trans-unit>
+      <trans-unit id="1814d65a76028fdfbadab64a5a8076df">
+        <source>Suppliers</source>
+        <target>Dostawcy</target>
+      </trans-unit>
+      <trans-unit id="181d4ded9b5b82c0ee26b12f8242afc6">
+        <source>Go to slide</source>
+        <target>Przejdź do slajdu</target>
+      </trans-unit>
+      <trans-unit id="844e665f1e16a2774d4fdf8adfe4c246">
+        <source>Previous slide</source>
+        <target>Poprzedni slajd</target>
+      </trans-unit>
+      <trans-unit id="9d636c6a540e6ecb5dfe6b278fc7c110">
+        <source>Next slide</source>
+        <target>Następny slajd</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>
