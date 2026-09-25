@@ -1,0 +1,36 @@
+name: Release
+
+# Pushing a tag such as v1.2.0 builds producercarousel.zip (installable through
+# Modules > Module Manager > Upload a module) and attaches it to a GitHub release.
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check that the tag matches the module version
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          grep -q "\$this->version = '${VERSION}';" producercarousel.php \
+            || { echo "producercarousel.php version differs from tag ${GITHUB_REF_NAME}"; exit 1; }
+          grep -q "<version><!\[CDATA\[${VERSION}\]\]></version>" config.xml \
+            || { echo "config.xml version differs from tag ${GITHUB_REF_NAME}"; exit 1; }
+
+      - name: Build module ZIP
+        run: git archive --format=zip --prefix=producercarousel/ -o producercarousel.zip HEAD
+
+      - name: Publish release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" producercarousel.zip \
+            --title "Brand & Supplier Carousel ${GITHUB_REF_NAME}" \
+            --generate-notes

@@ -28,17 +28,26 @@ This module answers those with native PrestaShop data (no duplicated logos to up
 
 ## Install
 
-1. Download the repository as a ZIP and rename the top folder to `producercarousel` (the folder name must match the module name), or clone it straight into `modules/`:
+No command line needed — the module installs from the PrestaShop back office.
 
-   ```bash
-   cd /path/to/prestashop/modules
-   git clone https://github.com/Breczek/producercarousel.git producercarousel
-   ```
+1. Download **`producercarousel.zip`** from the [latest release](https://github.com/Breczek/producercarousel/releases/latest).
+   Use this file, not GitHub's *Source code (zip)* — PrestaShop needs the folder inside the archive to be named exactly `producercarousel`.
+2. In the back office go to **Modules → Module Manager** and click **Upload a module**.
+3. Drop the ZIP file into the window. PrestaShop installs the module and offers **Configure**.
 
-2. In the back office go to **Modules → Module Manager**, find **Brand & Supplier Carousel** and click **Install**.
-3. Click **Configure** to set up each carousel.
+**Updating:** upload the newer `producercarousel.zip` the same way — your settings are kept. If labels still show the old wording, clear the cache in **Advanced Parameters → Performance**.
 
-Updating from Git: `git pull` inside the module folder, then run **Upgrade** in the Module Manager if PrestaShop offers it and clear the cache (**Advanced Parameters → Performance**).
+<details>
+<summary>For developers: install from Git</summary>
+
+```bash
+cd /path/to/prestashop/modules
+git clone https://github.com/Breczek/producercarousel.git producercarousel
+```
+
+Then install the module in **Modules → Module Manager**. To update, run `git pull` in the module folder, run **Upgrade** in the Module Manager if PrestaShop offers it, and clear the cache.
+
+</details>
 
 ## How to use
 
@@ -75,6 +84,8 @@ Design decisions and the reasoning behind them are documented in [`decisions.md`
 ## Contributing
 
 Issues and pull requests are welcome — PrestaShop keeps moving. Please include the PrestaShop version and theme you observed the behaviour on.
+
+Releases are built automatically: pushing a tag like `v1.2.0` (matching the version in `producercarousel.php` and `config.xml`) creates a GitHub release with the installable `producercarousel.zip`.
 
 Code style: PSR-2, checked with PHP_CodeSniffer:
 
