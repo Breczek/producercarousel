@@ -36,7 +36,10 @@
 ## Translations
 
 - Source strings are English, following PrestaShop convention. The module uses the new translation system (`isUsingNewTranslationSystem()`) with domains `Modules.Producercarousel.Admin` and `Modules.Producercarousel.Shop`.
-- A Polish catalogue ships in `translations/pl-PL/*.xlf`. Other languages can be added the same way or through International → Translations.
+- Polish ships twice, generated from the same word list:
+  - `translations/pl.php` — the legacy module format. PrestaShop 8 and 9 fall back to it whenever the translator catalogue has no entry for a `Modules.*` string (`PrestaShopTranslatorTrait::shouldFallbackToLegacyModuleTranslation`). Keys are `<{producercarousel}prestashop>admin_<md5>` / `…>shop_<md5>`, where `admin`/`shop` is the last part of the domain.
+  - `translations/pl-PL/*.xlf` — the new-system catalogue, loaded by `TranslatorLanguageLoader` for active modules. On the PrestaShop 8.2.8 test shop it was not picked up (cause not found), which is why the legacy file is the one that must stay complete.
+- When adding or changing a string, update both files. Other languages can be added the same way or through International → Translations.
 - A few generic labels (“Save”, “Disabled”, “The settings have been updated.”) use core domains so PrestaShop's own translations apply.
 
 ## Slider and assets

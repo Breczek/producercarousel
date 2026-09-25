@@ -2,7 +2,7 @@
 <module>
   <name>producercarousel</name>
   <displayName><![CDATA[Brand & Supplier Carousel]]></displayName>
-  <version><![CDATA[1.1.1]]></version>
+  <version><![CDATA[1.1.2]]></version>
   <description><![CDATA[Displays manufacturers and suppliers in two independent logo carousels.]]></description>
   <author><![CDATA[Marcin Bręczewski]]></author>
   <tab><![CDATA[front_office_features]]></tab>

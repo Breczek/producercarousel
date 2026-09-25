@@ -24,7 +24,7 @@ This module answers those with native PrestaShop data (no duplicated logos to up
 | **Dimensions** | Item width, item height and gap entered in px, or automatic |
 | **Widget support** | `{widget name='producercarousel' type='manufacturers'}` — `type` is `all`, `manufacturers` or `suppliers` |
 | **Accessibility** | Keyboard-focusable controls, labelled buttons, duplicated slides hidden from screen readers, autoplay off with `prefers-reduced-motion` |
-| **Translations** | English source strings, Polish catalogue included (`translations/pl-PL`) |
+| **Translations** | English source strings, Polish translation included |
 
 ## Install
 
@@ -78,7 +78,7 @@ Design decisions and the reasoning behind them are documented in [`decisions.md`
 ## Requirements
 
 - **PrestaShop:** 8.x and 9.x (declared compatibility `8.0.0`–`9.99.99`).
-- **Tested on:** PrestaShop 8.2.8 with the Classic theme.
+- **Tested on:** PrestaShop 8.2.8 and 9.0.3.
 - **Slider:** [Swiper](https://swiperjs.com) 12.2.0, bundled in `views/vendor/swiper` (MIT).
 
 ## Contributing

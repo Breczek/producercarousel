@@ -36,7 +36,7 @@ class ProducerCarousel extends Module implements WidgetInterface
     {
         $this->name = 'producercarousel';
         $this->tab = 'front_office_features';
-        $this->version = '1.1.1';
+        $this->version = '1.1.2';
         $this->author = 'Marcin Bręczewski';
         $this->need_instance = 0;
         $this->bootstrap = true;
