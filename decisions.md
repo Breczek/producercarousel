@@ -39,6 +39,7 @@
 - Używamy Swiper 12.2.0 na licencji MIT. Jest to wersja po poprawce bezpieczeństwa dotyczącej prototype pollution i zachowująca szerszą zgodność przeglądarek niż seria 14.
 - Pliki Swiper są dostarczane lokalnie z modułem, bez CDN. Moduł nie zależy od dostępności zewnętrznego serwera i nie wysyła do niego danych odwiedzających.
 - Skrypt inicjalizujący jest izolowany w kontenerze modułu i obsługuje wiele instancji widgetu na jednej stronie.
-- Pętla Swipera wymaga więcej slajdów niż widać naraz. Gdy logo jest za mało, JS powiela cały zestaw; kopie mają `aria-hidden` i `tabindex="-1"`, więc czytnik ekranu i klawiatura widzą każde logo raz. Skutek uboczny: przy powielonych slajdach paginacja pokazuje też kropki kopii.
+- Tryby `loop` i `marquee` działają zawsze, także gdy wszystkie logo mieszczą się na ekranie (wybór administratora jest jawny). Tylko tryb `slide` używa `watchOverflow` i ukrywa strzałki/kropki, gdy nie ma czego przewijać.
+- Pętla Swipera wymaga więcej slajdów niż widać naraz. Gdy logo jest za mało, JS powiela cały zestaw; kopie mają `aria-hidden` i `tabindex="-1"`, więc czytnik ekranu i klawiatura widzą każde logo raz. Przy powielonych slajdach paginację renderuje moduł (`type: 'custom'`) — jedna kropka na prawdziwe logo; styl `dynamic` wygląda wtedy jak zwykłe kropki.
 - Przy `prefers-reduced-motion: reduce` autoplay i przesuw ciągły są wyłączone.
 - Swiper 12 wstrzykuje strzałkę jako SVG (`.swiper-navigation-icon`), więc style strzałek stylują przycisk i SVG, a nie ikonę z fontu.

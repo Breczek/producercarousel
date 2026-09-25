@@ -9,6 +9,7 @@
       data-dots="{$settings.dots|escape:'htmlall':'UTF-8'}"
       data-width="{$settings.width|intval}"
       data-gap="{$settings.gap|intval}"
+      data-bullet-label="{l s='Przejdź do slajdu' d='Modules.Producercarousel.Shop'}"
       style="{if $settings.width}--producer-carousel-item-width: {$settings.width|intval}px;{/if}{if $settings.height}--producer-carousel-height: {$settings.height|intval}px;{/if}"
       aria-labelledby="{$carousel.id|escape:'htmlall':'UTF-8'}"
     >

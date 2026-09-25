@@ -47,12 +47,17 @@
       var slideCount = wrapper.children.length;
 
       // With a fixed item width the number of visible logos depends on the viewport.
+      var viewportStyle = window.getComputedStyle(viewport);
+      var viewportWidth = viewport.clientWidth
+        - (parseFloat(viewportStyle.paddingLeft) || 0)
+        - (parseFloat(viewportStyle.paddingRight) || 0);
       var visible = width > 0
-        ? Math.max(1, Math.ceil(viewport.clientWidth / (width + gap)))
+        ? Math.max(1, Math.ceil(viewportWidth / (width + gap)))
         : count;
-      var canScroll = slideCount > visible;
-      var loop = mode === 'marquee' || (mode === 'loop' && canScroll);
-      var autoplay = speed > 0 && !reducedMotion && (mode === 'marquee' || canScroll);
+      // Loop and marquee were chosen explicitly, so they run even when all logos fit on screen
+      // (the set is duplicated below). Only the standard mode stops when there is nothing to scroll.
+      var loop = mode === 'marquee' || mode === 'loop';
+      var autoplay = speed > 0 && !reducedMotion && (loop || slideCount > visible);
 
       var options = {
         a11y: true,
@@ -76,7 +81,29 @@
         options.navigation = { prevEl: previous, nextEl: next };
       }
 
-      if (pagination) {
+      if (loop) {
+        fillSlidesForLoop(wrapper, visible * 2 + 2);
+      }
+
+      if (pagination && wrapper.children.length > slideCount) {
+        // Native bullets would also count the duplicated slides, so render one bullet per real logo.
+        options.pagination = {
+          el: pagination,
+          type: 'custom',
+          renderCustom: function (swiper) {
+            var active = swiper.realIndex % slideCount;
+            var label = element.dataset.bulletLabel || '';
+            var html = '';
+            for (var i = 0; i < slideCount; i++) {
+              html += '<button type="button" class="swiper-pagination-bullet'
+                + (i === active ? ' swiper-pagination-bullet-active' : '')
+                + '" data-index="' + i + '" aria-label="' + label + ' ' + (i + 1) + '"'
+                + (i === active ? ' aria-current="true"' : '') + '></button>';
+            }
+            return html;
+          }
+        };
+      } else if (pagination) {
         options.pagination = {
           el: pagination,
           clickable: true,
@@ -100,11 +127,16 @@
         options.rewind = !loop;
       }
 
-      if (loop) {
-        fillSlidesForLoop(wrapper, visible * 2 + 2);
-      }
+      var swiper = new window.Swiper(viewport, options);
 
-      new window.Swiper(viewport, options);
+      if (pagination && options.pagination.type === 'custom') {
+        pagination.addEventListener('click', function (event) {
+          var bullet = event.target.closest('[data-index]');
+          if (bullet) {
+            swiper.slideToLoop(parseInt(bullet.dataset.index, 10));
+          }
+        });
+      }
     });
   }
 

@@ -156,7 +156,13 @@
 }
 
 .producer-carousel .producer-carousel__pagination .swiper-pagination-bullet {
+  cursor: pointer;
   transition: width .2s, opacity .2s, transform .2s;
+}
+
+/* Bullets rendered by the module when logos were duplicated for the loop. */
+.producer-carousel .producer-carousel__pagination.swiper-pagination-custom .swiper-pagination-bullet {
+  margin: 0 var(--swiper-pagination-bullet-horizontal-gap, 4px);
 }
 
 /* Pagination — dots */

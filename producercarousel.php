@@ -356,7 +356,7 @@ class ProducerCarousel extends Module implements WidgetInterface
 
         return [
             $this->selectField($prefix . 'COUNT', $this->trans('Liczba widocznych elementów', [], 'Modules.Producercarousel.Admin'), $countOptions),
-            $this->selectField($prefix . 'MODE', $this->trans('Tryb przewijania', [], 'Modules.Producercarousel.Admin'), $modeOptions),
+            $this->selectField($prefix . 'MODE', $this->trans('Tryb przewijania', [], 'Modules.Producercarousel.Admin'), $modeOptions, $this->trans('W trybie standardowym strzałki i kropki znikają, gdy wszystkie logo mieszczą się na ekranie. Pętla i przesuw ciągły działają zawsze — przy małej liczbie logo są one powielane.', [], 'Modules.Producercarousel.Admin')),
             $this->selectField($prefix . 'SPEED', $this->trans('Szybkość', [], 'Modules.Producercarousel.Admin'), $speedOptions, $this->trans('W trybie standardowym i pętli: odstęp między przesunięciami. W trybie ciągłym: czas przejazdu jednego logo (mniej = szybciej).', [], 'Modules.Producercarousel.Admin')),
             $this->selectField($prefix . 'ARROWS', $this->trans('Styl strzałek', [], 'Modules.Producercarousel.Admin'), $arrowOptions),
             $this->selectField($prefix . 'DOTS', $this->trans('Styl kropek (paginacja)', [], 'Modules.Producercarousel.Admin'), $dotOptions),
