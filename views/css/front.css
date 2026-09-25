@@ -1,5 +1,13 @@
+/*
+ * Theme hooks: override these custom properties in the theme to recolour
+ * arrows and pagination without touching the module files.
+ */
 .producer-carousel {
-  --producer-carousel-items: 6;
+  --producer-carousel-accent: #232323;
+  --producer-carousel-accent-contrast: #fff;
+  --producer-carousel-height: 8rem;
+  --producer-carousel-item-width: auto;
+  --producer-carousel-arrow-size: 2.75rem;
   margin: 2rem 0;
   position: relative;
 }
@@ -9,20 +17,34 @@
   text-align: center;
 }
 
+.producer-carousel__stage {
+  position: relative;
+}
+
 .producer-carousel__viewport {
-  padding: 0 2.75rem;
+  padding: 0 calc(var(--producer-carousel-arrow-size) + .25rem);
+}
+
+.producer-carousel--arrows-none .producer-carousel__viewport {
+  padding: 0;
 }
 
 .producer-carousel__item {
   align-items: center;
+  box-sizing: border-box;
   display: flex;
-  height: auto;
+  height: var(--producer-carousel-height);
   justify-content: center;
-  min-height: 8rem;
+}
+
+.producer-carousel--fixed-width .producer-carousel__item {
+  max-width: 100%;
+  width: var(--producer-carousel-item-width);
 }
 
 .producer-carousel__link {
   align-items: center;
+  box-sizing: border-box;
   display: flex;
   height: 100%;
   justify-content: center;
@@ -33,7 +55,7 @@
 .producer-carousel__image {
   display: block;
   height: auto;
-  max-height: 7rem;
+  max-height: 100%;
   max-width: 100%;
   object-fit: contain;
   width: auto;
@@ -41,22 +63,130 @@
 
 .producer-carousel__empty {
   display: block;
-  min-height: 7rem;
+  height: 100%;
   width: 100%;
 }
 
-.producer-carousel .swiper-button-prev,
-.producer-carousel .swiper-button-next {
-  color: currentColor;
+/* Continuous ticker: constant speed instead of ease between slides. */
+.producer-carousel--mode-marquee {
+  --swiper-wrapper-transition-timing-function: linear;
 }
 
-.producer-carousel .swiper-button-prev::after,
-.producer-carousel .swiper-button-next::after {
-  font-size: 1.5rem;
+/* Arrows — shared */
+.producer-carousel .producer-carousel__arrow {
+  --swiper-navigation-size: var(--producer-carousel-arrow-size);
+  --swiper-navigation-sides-offset: 0;
+  box-sizing: border-box;
+  color: var(--producer-carousel-accent);
+  padding: 0;
+  transition: background-color .2s, color .2s, border-color .2s, opacity .2s;
+}
+
+.producer-carousel .producer-carousel__arrow .swiper-navigation-icon {
+  height: 40%;
+  width: auto;
+}
+
+.producer-carousel .producer-carousel__arrow:focus-visible {
+  outline: 2px solid var(--producer-carousel-accent);
+  outline-offset: 2px;
+}
+
+/* Arrows — minimal: bare chevron */
+.producer-carousel--arrows-minimal .producer-carousel__arrow {
+  background: none;
+  border: 0;
+}
+
+.producer-carousel--arrows-minimal .producer-carousel__arrow:hover {
+  opacity: .6;
+}
+
+/* Arrows — circle: filled disc */
+.producer-carousel--arrows-circle {
+  --producer-carousel-arrow-size: 2.5rem;
+}
+
+.producer-carousel--arrows-circle .producer-carousel__arrow {
+  background: var(--producer-carousel-accent);
+  border: 0;
+  border-radius: 50%;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, .2);
+  color: var(--producer-carousel-accent-contrast);
+}
+
+.producer-carousel--arrows-circle .producer-carousel__arrow .swiper-navigation-icon {
+  height: 35%;
+}
+
+.producer-carousel--arrows-circle .producer-carousel__arrow:hover {
+  opacity: .85;
+}
+
+/* Arrows — square: outlined box, filled on hover */
+.producer-carousel--arrows-square {
+  --producer-carousel-arrow-size: 2.5rem;
+}
+
+.producer-carousel--arrows-square .producer-carousel__arrow {
+  background: var(--producer-carousel-accent-contrast);
+  border: 1px solid var(--producer-carousel-accent);
+  border-radius: 2px;
+}
+
+.producer-carousel--arrows-square .producer-carousel__arrow .swiper-navigation-icon {
+  height: 35%;
+}
+
+.producer-carousel--arrows-square .producer-carousel__arrow:hover {
+  background: var(--producer-carousel-accent);
+  color: var(--producer-carousel-accent-contrast);
+}
+
+/* Pagination — shared: placed under the slider instead of over the logos */
+.producer-carousel .producer-carousel__pagination {
+  --swiper-pagination-color: var(--producer-carousel-accent);
+  --swiper-pagination-bullet-inactive-color: var(--producer-carousel-accent);
+  --swiper-pagination-bullet-inactive-opacity: .25;
+  bottom: auto;
+  line-height: 0;
+  margin-top: 1rem;
+  position: relative;
+  top: auto;
+}
+
+.producer-carousel .producer-carousel__pagination .swiper-pagination-bullet {
+  transition: width .2s, opacity .2s, transform .2s;
+}
+
+/* Pagination — dots */
+.producer-carousel--dots-dots .producer-carousel__pagination,
+.producer-carousel--dots-dynamic .producer-carousel__pagination {
+  --swiper-pagination-bullet-size: 10px;
+  --swiper-pagination-bullet-horizontal-gap: 5px;
+}
+
+/* Pagination — lines: short bars, the active one is longer */
+.producer-carousel--dots-lines .producer-carousel__pagination {
+  --swiper-pagination-bullet-width: 1.5rem;
+  --swiper-pagination-bullet-height: 4px;
+  --swiper-pagination-bullet-border-radius: 2px;
+  --swiper-pagination-bullet-horizontal-gap: 3px;
+}
+
+.producer-carousel--dots-lines .producer-carousel__pagination .swiper-pagination-bullet-active {
+  width: 2.5rem;
 }
 
 @media (max-width: 575.98px) {
-  .producer-carousel__viewport {
-    padding: 0 2rem;
+  .producer-carousel {
+    --producer-carousel-arrow-size: 2rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .producer-carousel .producer-carousel__arrow,
+  .producer-carousel .producer-carousel__pagination .swiper-pagination-bullet {
+    transition: none;
   }
 }

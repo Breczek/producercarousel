@@ -2,7 +2,7 @@
 <module>
   <name>producercarousel</name>
   <displayName><![CDATA[Karuzela producentów i dostawców]]></displayName>
-  <version><![CDATA[1.0.0]]></version>
+  <version><![CDATA[1.1.0]]></version>
   <description><![CDATA[Wyświetla producentów i dostawców w dwóch niezależnych karuzelach.]]></description>
   <author><![CDATA[Producer Carousel]]></author>
   <tab><![CDATA[front_office_features]]></tab>

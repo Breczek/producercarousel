@@ -8,23 +8,35 @@ use PrestaShop\PrestaShop\Core\Module\WidgetInterface;
 
 class ProducerCarousel extends Module implements WidgetInterface
 {
-    private const MFR_COUNT = 'PC_MFR_COUNT';
-    private const MFR_SPEED = 'PC_MFR_SPEED';
+    private const MFR_PREFIX = 'PC_MFR_';
     private const MFR_EXCLUDED = 'PC_MFR_EXCLUDED';
-    private const SUP_COUNT = 'PC_SUP_COUNT';
-    private const SUP_SPEED = 'PC_SUP_SPEED';
+    private const SUP_PREFIX = 'PC_SUP_';
     private const SUP_EXCLUDED = 'PC_SUP_EXCLUDED';
     private const DISPLAY_MODE = 'PC_DISPLAY_MODE';
 
-    private const COUNTS = [2, 3, 4, 5, 6, 8];
-    private const SPEEDS = [0, 2000, 3000, 4000, 5000, 7000, 10000];
     private const DISPLAY_MODES = ['all', 'manufacturers', 'suppliers'];
+
+    /**
+     * Per-carousel settings, stored as prefix + key (e.g. PC_MFR_COUNT).
+     * "choices" settings accept only listed values, "min"/"max" settings accept
+     * an integer from the range; "auto" additionally allows 0 as "automatic".
+     */
+    private const CAROUSEL_SETTINGS = [
+        'COUNT' => ['choices' => [2, 3, 4, 5, 6, 8], 'default' => 6],
+        'MODE' => ['choices' => ['slide', 'loop', 'marquee'], 'default' => 'loop'],
+        'SPEED' => ['choices' => [0, 2000, 3000, 4000, 5000, 7000, 10000], 'default' => 4000],
+        'ARROWS' => ['choices' => ['none', 'minimal', 'circle', 'square'], 'default' => 'minimal'],
+        'DOTS' => ['choices' => ['none', 'dots', 'lines', 'dynamic'], 'default' => 'none'],
+        'WIDTH' => ['min' => 40, 'max' => 600, 'auto' => true, 'default' => 0],
+        'HEIGHT' => ['min' => 30, 'max' => 400, 'auto' => true, 'default' => 0],
+        'GAP' => ['min' => 0, 'max' => 100, 'default' => 16],
+    ];
 
     public function __construct()
     {
         $this->name = 'producercarousel';
         $this->tab = 'front_office_features';
-        $this->version = '1.0.0';
+        $this->version = '1.1.0';
         $this->author = 'Producer Carousel';
         $this->need_instance = 0;
         $this->bootstrap = true;
@@ -41,19 +53,44 @@ class ProducerCarousel extends Module implements WidgetInterface
         return parent::install()
             && $this->registerHook('displayHome')
             && $this->registerHook('displayHeader')
-            && Configuration::updateValue(self::MFR_COUNT, 6)
-            && Configuration::updateValue(self::MFR_SPEED, 4000)
-            && Configuration::updateValue(self::MFR_EXCLUDED, '[]')
-            && Configuration::updateValue(self::SUP_COUNT, 6)
-            && Configuration::updateValue(self::SUP_SPEED, 4000)
-            && Configuration::updateValue(self::SUP_EXCLUDED, '[]')
-            && Configuration::updateValue(self::DISPLAY_MODE, 'all');
+            && $this->installDefaults();
+    }
+
+    /**
+     * Also used by upgrade scripts: only missing keys are created, so saved values stay untouched.
+     */
+    public function installDefaults()
+    {
+        $defaults = [
+            self::MFR_EXCLUDED => '[]',
+            self::SUP_EXCLUDED => '[]',
+            self::DISPLAY_MODE => 'all',
+        ];
+        foreach ([self::MFR_PREFIX, self::SUP_PREFIX] as $prefix) {
+            foreach (self::CAROUSEL_SETTINGS as $key => $definition) {
+                $defaults[$prefix . $key] = $definition['default'];
+            }
+        }
+
+        $result = true;
+        foreach ($defaults as $key => $value) {
+            if (Configuration::get($key) === false) {
+                $result = Configuration::updateValue($key, $value) && $result;
+            }
+        }
+
+        return $result;
     }
 
     public function uninstall()
     {
-        foreach ([self::MFR_COUNT, self::MFR_SPEED, self::MFR_EXCLUDED, self::SUP_COUNT, self::SUP_SPEED, self::SUP_EXCLUDED, self::DISPLAY_MODE] as $key) {
+        foreach ([self::MFR_EXCLUDED, self::SUP_EXCLUDED, self::DISPLAY_MODE] as $key) {
             Configuration::deleteByName($key);
+        }
+        foreach ([self::MFR_PREFIX, self::SUP_PREFIX] as $prefix) {
+            foreach (array_keys(self::CAROUSEL_SETTINGS) as $key) {
+                Configuration::deleteByName($prefix . $key);
+            }
         }
 
         return parent::uninstall();
@@ -114,8 +151,7 @@ class ProducerCarousel extends Module implements WidgetInterface
                 'type' => 'manufacturers',
                 'title' => $this->trans('Producenci', [], 'Modules.Producercarousel.Shop'),
                 'items' => $this->getManufacturerItems(),
-                'count' => $this->getAllowedValue(self::MFR_COUNT, self::COUNTS, 6),
-                'speed' => $this->getAllowedValue(self::MFR_SPEED, self::SPEEDS, 4000),
+                'settings' => $this->getCarouselSettings(self::MFR_PREFIX),
             ];
         }
         if ($type === 'all' || $type === 'suppliers') {
@@ -124,8 +160,7 @@ class ProducerCarousel extends Module implements WidgetInterface
                 'type' => 'suppliers',
                 'title' => $this->trans('Dostawcy', [], 'Modules.Producercarousel.Shop'),
                 'items' => $this->getSupplierItems(),
-                'count' => $this->getAllowedValue(self::SUP_COUNT, self::COUNTS, 6),
-                'speed' => $this->getAllowedValue(self::SUP_SPEED, self::SPEEDS, 4000),
+                'settings' => $this->getCarouselSettings(self::SUP_PREFIX),
             ];
         }
 
@@ -151,12 +186,14 @@ class ProducerCarousel extends Module implements WidgetInterface
     {
         $errors = [];
         $values = [];
-        foreach ([[self::MFR_COUNT, self::COUNTS], [self::SUP_COUNT, self::COUNTS], [self::MFR_SPEED, self::SPEEDS], [self::SUP_SPEED, self::SPEEDS]] as $setting) {
-            $value = (int) Tools::getValue($setting[0]);
-            if (!in_array($value, $setting[1], true)) {
-                $errors[] = $this->trans('Wybrano niedozwoloną wartość ustawienia.', [], 'Modules.Producercarousel.Admin');
-            } else {
-                $values[$setting[0]] = $value;
+        foreach ([self::MFR_PREFIX, self::SUP_PREFIX] as $prefix) {
+            foreach (self::CAROUSEL_SETTINGS as $key => $definition) {
+                $value = $this->normalizeSetting($definition, trim((string) Tools::getValue($prefix . $key)));
+                if ($value === null) {
+                    $errors[] = $this->getInvalidValueMessage($definition);
+                } else {
+                    $values[$prefix . $key] = $value;
+                }
             }
         }
 
@@ -166,7 +203,7 @@ class ProducerCarousel extends Module implements WidgetInterface
         }
 
         if ($errors) {
-            return $errors;
+            return array_values(array_unique($errors));
         }
 
         Configuration::updateValue(self::DISPLAY_MODE, $displayMode);
@@ -175,10 +212,51 @@ class ProducerCarousel extends Module implements WidgetInterface
             Configuration::updateValue($key, $value);
         }
 
-        Configuration::updateValue(self::MFR_EXCLUDED, json_encode($this->collectExcludedIds('PC_MFR_', Manufacturer::getManufacturers(false, (int) $this->context->language->id, false))));
-        Configuration::updateValue(self::SUP_EXCLUDED, json_encode($this->collectExcludedIds('PC_SUP_', Supplier::getSuppliers(false, (int) $this->context->language->id, false))));
+        Configuration::updateValue(self::MFR_EXCLUDED, json_encode($this->collectExcludedIds(self::MFR_PREFIX, Manufacturer::getManufacturers(false, (int) $this->context->language->id, false))));
+        Configuration::updateValue(self::SUP_EXCLUDED, json_encode($this->collectExcludedIds(self::SUP_PREFIX, Supplier::getSuppliers(false, (int) $this->context->language->id, false))));
 
         return $errors;
+    }
+
+    /**
+     * Returns the value cast to its setting type, or null when it is not allowed.
+     */
+    private function normalizeSetting(array $definition, $raw)
+    {
+        if (isset($definition['choices'])) {
+            if (is_int($definition['default']) && !ctype_digit((string) $raw)) {
+                return null;
+            }
+            $value = is_int($definition['default']) ? (int) $raw : (string) $raw;
+
+            return in_array($value, $definition['choices'], true) ? $value : null;
+        }
+
+        if ($raw === '' && !empty($definition['auto'])) {
+            return 0;
+        }
+        if (!ctype_digit((string) $raw)) {
+            return null;
+        }
+        $value = (int) $raw;
+        if ($value === 0 && !empty($definition['auto'])) {
+            return 0;
+        }
+
+        return $value >= $definition['min'] && $value <= $definition['max'] ? $value : null;
+    }
+
+    private function getInvalidValueMessage(array $definition)
+    {
+        if (isset($definition['choices'])) {
+            return $this->trans('Wybrano niedozwoloną wartość ustawienia.', [], 'Modules.Producercarousel.Admin');
+        }
+
+        return $this->trans(
+            'Wymiary muszą być liczbą całkowitą z zakresu %min%–%max% px (0 = automatycznie tam, gdzie to dozwolone).',
+            ['%min%' => $definition['min'], '%max%' => $definition['max']],
+            'Modules.Producercarousel.Admin'
+        );
     }
 
     private function collectExcludedIds($prefix, array $entities)
@@ -198,33 +276,44 @@ class ProducerCarousel extends Module implements WidgetInterface
     {
         $manufacturers = Manufacturer::getManufacturers(false, (int) $this->context->language->id, false);
         $suppliers = Supplier::getSuppliers(false, (int) $this->context->language->id, false);
-        $countOptions = array_map(function ($value) {
-            return ['id' => $value, 'name' => (string) $value];
-        }, self::COUNTS);
-        $speedOptions = array_map(function ($value) {
-            return ['id' => $value, 'name' => $value === 0 ? $this->trans('Wyłączone', [], 'Admin.Global') : $value . ' ms'];
-        }, self::SPEEDS);
         $displayModeOptions = [
             ['id' => 'all', 'name' => $this->trans('Obie karuzele', [], 'Modules.Producercarousel.Admin')],
             ['id' => 'manufacturers', 'name' => $this->trans('Tylko producenci', [], 'Modules.Producercarousel.Admin')],
             ['id' => 'suppliers', 'name' => $this->trans('Tylko dostawcy', [], 'Modules.Producercarousel.Admin')],
         ];
+        $submit = ['title' => $this->trans('Zapisz', [], 'Admin.Actions')];
 
-        $fieldsForm = [[
-            'form' => [
-                'legend' => ['title' => $this->trans('Ustawienia karuzeli', [], 'Modules.Producercarousel.Admin'), 'icon' => 'icon-cogs'],
-                'input' => [
-                    $this->selectField(self::DISPLAY_MODE, $this->trans('Co wyświetlać w głównym hooku (displayHome)', [], 'Modules.Producercarousel.Admin'), $displayModeOptions),
-                    $this->selectField(self::MFR_COUNT, $this->trans('Liczba widocznych producentów', [], 'Modules.Producercarousel.Admin'), $countOptions),
-                    $this->selectField(self::MFR_SPEED, $this->trans('Szybkość producentów', [], 'Modules.Producercarousel.Admin'), $speedOptions),
-                    $this->checkboxField('PC_MFR', $this->trans('Widoczni producenci', [], 'Modules.Producercarousel.Admin'), $manufacturers, 'id_manufacturer'),
-                    $this->selectField(self::SUP_COUNT, $this->trans('Liczba widocznych dostawców', [], 'Modules.Producercarousel.Admin'), $countOptions),
-                    $this->selectField(self::SUP_SPEED, $this->trans('Szybkość dostawców', [], 'Modules.Producercarousel.Admin'), $speedOptions),
-                    $this->checkboxField('PC_SUP', $this->trans('Widoczni dostawcy', [], 'Modules.Producercarousel.Admin'), $suppliers, 'id_supplier'),
+        $fieldsForm = [
+            [
+                'form' => [
+                    'legend' => ['title' => $this->trans('Ustawienia ogólne', [], 'Modules.Producercarousel.Admin'), 'icon' => 'icon-cogs'],
+                    'input' => [
+                        $this->selectField(self::DISPLAY_MODE, $this->trans('Co wyświetlać w głównym hooku (displayHome)', [], 'Modules.Producercarousel.Admin'), $displayModeOptions),
+                    ],
+                    'submit' => $submit,
                 ],
-                'submit' => ['title' => $this->trans('Zapisz', [], 'Admin.Actions')],
             ],
-        ]];
+            [
+                'form' => [
+                    'legend' => ['title' => $this->trans('Karuzela producentów', [], 'Modules.Producercarousel.Admin'), 'icon' => 'icon-industry'],
+                    'input' => array_merge(
+                        $this->carouselFields(self::MFR_PREFIX),
+                        [$this->checkboxField('PC_MFR', $this->trans('Widoczni producenci', [], 'Modules.Producercarousel.Admin'), $manufacturers, 'id_manufacturer')]
+                    ),
+                    'submit' => $submit,
+                ],
+            ],
+            [
+                'form' => [
+                    'legend' => ['title' => $this->trans('Karuzela dostawców', [], 'Modules.Producercarousel.Admin'), 'icon' => 'icon-truck'],
+                    'input' => array_merge(
+                        $this->carouselFields(self::SUP_PREFIX),
+                        [$this->checkboxField('PC_SUP', $this->trans('Widoczni dostawcy', [], 'Modules.Producercarousel.Admin'), $suppliers, 'id_supplier')]
+                    ),
+                    'submit' => $submit,
+                ],
+            ],
+        ];
 
         $helper = new HelperForm();
         $helper->module = $this;
@@ -239,9 +328,66 @@ class ProducerCarousel extends Module implements WidgetInterface
         return $helper->generateForm($fieldsForm);
     }
 
-    private function selectField($name, $label, array $options)
+    private function carouselFields($prefix)
     {
-        return ['type' => 'select', 'label' => $label, 'name' => $name, 'options' => ['query' => $options, 'id' => 'id', 'name' => 'name']];
+        $countOptions = array_map(function ($value) {
+            return ['id' => $value, 'name' => (string) $value];
+        }, self::CAROUSEL_SETTINGS['COUNT']['choices']);
+        $speedOptions = array_map(function ($value) {
+            return ['id' => $value, 'name' => $value === 0 ? $this->trans('Wyłączone', [], 'Admin.Global') : $value . ' ms'];
+        }, self::CAROUSEL_SETTINGS['SPEED']['choices']);
+        $modeOptions = [
+            ['id' => 'slide', 'name' => $this->trans('Standardowy (zatrzymuje się na końcu, autoplay wraca na początek)', [], 'Modules.Producercarousel.Admin')],
+            ['id' => 'loop', 'name' => $this->trans('Nieskończona pętla', [], 'Modules.Producercarousel.Admin')],
+            ['id' => 'marquee', 'name' => $this->trans('Ciągły przesuw (infinity ticker)', [], 'Modules.Producercarousel.Admin')],
+        ];
+        $arrowOptions = [
+            ['id' => 'none', 'name' => $this->trans('Brak', [], 'Modules.Producercarousel.Admin')],
+            ['id' => 'minimal', 'name' => $this->trans('Minimalne (sama strzałka)', [], 'Modules.Producercarousel.Admin')],
+            ['id' => 'circle', 'name' => $this->trans('Wypełnione koło', [], 'Modules.Producercarousel.Admin')],
+            ['id' => 'square', 'name' => $this->trans('Kwadrat z obramowaniem', [], 'Modules.Producercarousel.Admin')],
+        ];
+        $dotOptions = [
+            ['id' => 'none', 'name' => $this->trans('Brak', [], 'Modules.Producercarousel.Admin')],
+            ['id' => 'dots', 'name' => $this->trans('Kropki', [], 'Modules.Producercarousel.Admin')],
+            ['id' => 'lines', 'name' => $this->trans('Kreski', [], 'Modules.Producercarousel.Admin')],
+            ['id' => 'dynamic', 'name' => $this->trans('Dynamiczne kropki (skalowane)', [], 'Modules.Producercarousel.Admin')],
+        ];
+
+        return [
+            $this->selectField($prefix . 'COUNT', $this->trans('Liczba widocznych elementów', [], 'Modules.Producercarousel.Admin'), $countOptions),
+            $this->selectField($prefix . 'MODE', $this->trans('Tryb przewijania', [], 'Modules.Producercarousel.Admin'), $modeOptions),
+            $this->selectField($prefix . 'SPEED', $this->trans('Szybkość', [], 'Modules.Producercarousel.Admin'), $speedOptions, $this->trans('W trybie standardowym i pętli: odstęp między przesunięciami. W trybie ciągłym: czas przejazdu jednego logo (mniej = szybciej).', [], 'Modules.Producercarousel.Admin')),
+            $this->selectField($prefix . 'ARROWS', $this->trans('Styl strzałek', [], 'Modules.Producercarousel.Admin'), $arrowOptions),
+            $this->selectField($prefix . 'DOTS', $this->trans('Styl kropek (paginacja)', [], 'Modules.Producercarousel.Admin'), $dotOptions),
+            $this->pixelField($prefix . 'WIDTH', $this->trans('Szerokość elementu', [], 'Modules.Producercarousel.Admin'), self::CAROUSEL_SETTINGS['WIDTH'], $this->trans('0 = automatycznie według liczby widocznych elementów. Podana szerokość zastępuje ustawienie liczby elementów.', [], 'Modules.Producercarousel.Admin')),
+            $this->pixelField($prefix . 'HEIGHT', $this->trans('Wysokość elementu', [], 'Modules.Producercarousel.Admin'), self::CAROUSEL_SETTINGS['HEIGHT'], $this->trans('0 = domyślna wysokość. Logo jest skalowane proporcjonalnie do tej wysokości.', [], 'Modules.Producercarousel.Admin')),
+            $this->pixelField($prefix . 'GAP', $this->trans('Odstęp między elementami', [], 'Modules.Producercarousel.Admin'), self::CAROUSEL_SETTINGS['GAP']),
+        ];
+    }
+
+    private function selectField($name, $label, array $options, $desc = null)
+    {
+        $field = ['type' => 'select', 'label' => $label, 'name' => $name, 'options' => ['query' => $options, 'id' => 'id', 'name' => 'name']];
+        if ($desc !== null) {
+            $field['desc'] = $desc;
+        }
+
+        return $field;
+    }
+
+    private function pixelField($name, $label, array $definition, $desc = null)
+    {
+        $range = $this->trans('Zakres: %min%–%max% px.', ['%min%' => $definition['min'], '%max%' => $definition['max']], 'Modules.Producercarousel.Admin');
+
+        return [
+            'type' => 'text',
+            'label' => $label,
+            'name' => $name,
+            'suffix' => 'px',
+            'class' => 'fixed-width-sm',
+            'desc' => trim($range . ' ' . (string) $desc),
+        ];
     }
 
     private function checkboxField($name, $label, array $entities, $idKey)
@@ -256,22 +402,21 @@ class ProducerCarousel extends Module implements WidgetInterface
 
     private function getFormValues(array $manufacturers, array $suppliers)
     {
-        $values = [
-            self::DISPLAY_MODE => $this->getDisplayMode(),
-            self::MFR_COUNT => $this->getAllowedValue(self::MFR_COUNT, self::COUNTS, 6),
-            self::MFR_SPEED => $this->getAllowedValue(self::MFR_SPEED, self::SPEEDS, 4000),
-            self::SUP_COUNT => $this->getAllowedValue(self::SUP_COUNT, self::COUNTS, 6),
-            self::SUP_SPEED => $this->getAllowedValue(self::SUP_SPEED, self::SPEEDS, 4000),
-        ];
+        $values = [self::DISPLAY_MODE => $this->getDisplayMode()];
+        foreach ([self::MFR_PREFIX, self::SUP_PREFIX] as $prefix) {
+            foreach ($this->getCarouselSettings($prefix) as $key => $value) {
+                $values[$prefix . strtoupper($key)] = $value;
+            }
+        }
         $mfrExcluded = $this->getExcluded(self::MFR_EXCLUDED);
         foreach ($manufacturers as $manufacturer) {
             $id = (int) $manufacturer['id_manufacturer'];
-            $values['PC_MFR_' . $id] = !in_array($id, $mfrExcluded, true);
+            $values[self::MFR_PREFIX . $id] = !in_array($id, $mfrExcluded, true);
         }
         $supExcluded = $this->getExcluded(self::SUP_EXCLUDED);
         foreach ($suppliers as $supplier) {
             $id = (int) $supplier['id_supplier'];
-            $values['PC_SUP_' . $id] = !in_array($id, $supExcluded, true);
+            $values[self::SUP_PREFIX . $id] = !in_array($id, $supExcluded, true);
         }
 
         return $values;
@@ -332,10 +477,19 @@ class ProducerCarousel extends Module implements WidgetInterface
         return is_array($decoded) ? array_values(array_map('intval', $decoded)) : [];
     }
 
-    private function getAllowedValue($key, array $allowed, $default)
+    /**
+     * Stored settings of one carousel, with invalid or missing values replaced by defaults.
+     */
+    private function getCarouselSettings($prefix)
     {
-        $value = (int) Configuration::get($key);
-        return in_array($value, $allowed, true) ? $value : $default;
+        $settings = [];
+        foreach (self::CAROUSEL_SETTINGS as $key => $definition) {
+            $raw = Configuration::get($prefix . $key);
+            $value = $raw === false ? null : $this->normalizeSetting($definition, trim((string) $raw));
+            $settings[strtolower($key)] = $value === null ? $definition['default'] : $value;
+        }
+
+        return $settings;
     }
 
     private function getDisplayMode()
