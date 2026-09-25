@@ -2,6 +2,8 @@
 
 A PrestaShop 8/9 module that shows manufacturer and supplier logos in two independent, configurable carousels — as a `displayHome` block or as a widget in any hook or template.
 
+![Brand carousel on the Classic theme home page — infinite loop with minimal arrows](docs/demo.gif)
+
 ## Why this exists
 
 - *The native Brand list module (`ps_brandlist`) shows names as a plain list or a dropdown — how do I show the logos as a carousel, and suppliers too?*
@@ -58,12 +60,16 @@ Updating from Git: `git pull` inside the module folder, then run **Upgrade** in 
   }
   ```
 
+Each carousel is configured separately in the back office:
+
+![Module configuration: general settings and the manufacturer carousel section](docs/back-office.png)
+
 Design decisions and the reasoning behind them are documented in [`decisions.md`](decisions.md).
 
 ## Requirements
 
 - **PrestaShop:** 8.x and 9.x (declared compatibility `8.0.0`–`9.99.99`).
-- **Tested on:** PrestaShop 8 with the Classic theme.
+- **Tested on:** PrestaShop 8.2.8 with the Classic theme.
 - **Slider:** [Swiper](https://swiperjs.com) 12.2.0, bundled in `views/vendor/swiper` (MIT).
 
 ## Contributing
